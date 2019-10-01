@@ -47,6 +47,18 @@ function Movies({favorites, isFavoritesLoading, favoritesError, addFavorite, rem
       }
     })()
   }, [])
+
+  const dataToDispay = [
+    {
+      title: 'Playing',
+      content: playingMovies
+    },
+    {
+      title: 'Upcoming',
+      content: upcomingMovies
+    },
+  ]
+
   return (
     <div>
       <Container>
@@ -57,23 +69,22 @@ function Movies({favorites, isFavoritesLoading, favoritesError, addFavorite, rem
             {!isLoading && error && <div>{error}</div>}
             {!isLoading && !error && <div>
               <div className="font-weight-bold">Playing</div>
-              <ul>
-                {playingMovies.map(movie => <li>
-                  <MovieCard
-                    movie={movie}
-                    isDisabled={isFavoritesLoading}
-                    isFavorite={favorites.findIndex(x => x.eventId == movie.id) !== -1}
-                    onLike={addFavorite}
-                    onDislike={removeFavorite}
-                  />
-                </li>)}
-              </ul>
-              <div className="font-weight-bold">Upcoming</div>
-              <ul>
-                {upcomingMovies.map(movie => <li>
-                  <MovieCard movie={movie} />
-                </li>)}
-              </ul>
+              {dataToDispay.map(movies => {
+                return <div>
+                  <p>{movies.title}</p>
+                  <ul>
+                    {movies.content.map(movie => <li>
+                      <MovieCard
+                        movie={movie}
+                        isDisabled={isFavoritesLoading}
+                        isFavorite={favorites.findIndex(x => x.eventId == movie.id) !== -1}
+                        onLike={addFavorite}
+                        onDislike={removeFavorite}
+                      />
+                    </li>)}
+                  </ul>
+                </div>
+              })}
             </div>}
           </Col>
           <Col xs="4">

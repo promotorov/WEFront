@@ -30,8 +30,7 @@ function rootReducer(state = initialState, action) {
       favorites = [...state.favorites, { eventId: action.payload }]
     else if (action.type === REMOVE_FAVORITE_SUCCESS) {
       const copy = [...state.favorites]
-      const index = copy.findIndex(x => x.eventId === action.payload)
-      console.log(index)
+      const index = copy.findIndex(x => x.eventId == action.payload)
       if (index > -1)
         copy.splice(index, 1)
       favorites = copy
