@@ -1,20 +1,33 @@
 import React, { Component, useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import axios from '../axios/config'
+import { connect } from 'react-redux'
+import { loadFavorites } from "../actions/index";
+
+const mapStateToProps = state => {
+  return {
+    isLoaded: state.isLoaded
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    loadFavorites: () => dispatch(loadFavorites())
+  }
+}
 
 function withAuth(ProtectedComponent) {
-  return function (props) {
+  function Protect(props) {
     const [isLoading, setLoading] = useState(true)
     const [redirect, setRedirect] = useState(false)
 
     useEffect(() => {
       (async function() {
         try {
-          const res = await axios.get('/session')
+          await axios.get('/session')
           setLoading(false)
-          if (res.status !== 200) {
-            setRedirect(true)
-          }
+          if (!props.isLoaded)
+            props.loadFavorites()
         }
         catch (error) {
           setLoading(false)
@@ -33,6 +46,7 @@ function withAuth(ProtectedComponent) {
       <ProtectedComponent {...props} />
     )
   }
+  return connect(mapStateToProps, mapDispatchToProps)(Protect)
 }
 
 export default withAuth

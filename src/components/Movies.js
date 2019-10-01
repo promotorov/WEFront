@@ -2,14 +2,31 @@ import React, { Component, useState, useEffect } from 'react'
 import { Container, Col, Row } from 'reactstrap'
 import axios from '../axios/config'
 import MovieCard from './MovieCard'
+import { connect } from 'react-redux'
+import {addFavorite} from "../actions";
+import {removeFavorite} from "../actions";
 
-function Movies() {
+const mapStateToProps = state => {
+  return {
+    favorites: state.favorites,
+    isFavoritesLoading: state.isLoading,
+    favoritesError: state.error
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    addFavorite: id => dispatch(addFavorite(id)),
+    removeFavorite: id => dispatch(removeFavorite(id))
+  }
+}
+
+function Movies({favorites, isFavoritesLoading, favoritesError, addFavorite, removeFavorite}) {
   const [playingMovies, setPlayingMovies] = useState([])
   const [upcomingMovies, setUpcomingMovies] = useState([])
   const [genres, setGenres] = useState([])
   const [isLoading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-
   useEffect(() => {
     (async function () {
       try {
@@ -30,7 +47,6 @@ function Movies() {
       }
     })()
   }, [])
-
   return (
     <div>
       <Container>
@@ -43,7 +59,13 @@ function Movies() {
               <div className="font-weight-bold">Playing</div>
               <ul>
                 {playingMovies.map(movie => <li>
-                  <MovieCard movie={movie} />
+                  <MovieCard
+                    movie={movie}
+                    isDisabled={isFavoritesLoading}
+                    isFavorite={favorites.findIndex(x => x.eventId == movie.id) !== -1}
+                    onLike={addFavorite}
+                    onDislike={removeFavorite}
+                  />
                 </li>)}
               </ul>
               <div className="font-weight-bold">Upcoming</div>
@@ -70,4 +92,4 @@ function Movies() {
   )
 }
 
-export default Movies
+export default connect(mapStateToProps, mapDispatchToProps)(Movies)
