@@ -68,7 +68,6 @@ function Movies({favorites, isFavoritesLoading, favoritesError, addFavorite, rem
             {isLoading && <div>Loading...</div>}
             {!isLoading && error && <div>{error}</div>}
             {!isLoading && !error && <div>
-              <div className="font-weight-bold">Playing</div>
               {dataToDispay.map(movies => {
                 return <div>
                   <p>{movies.title}</p>
